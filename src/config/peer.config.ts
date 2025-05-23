@@ -1,15 +1,19 @@
 // PeerJS server configuration
+const isProduction = process.env.NODE_ENV === 'production';
+
 export const peerConfig = {
-  // Change this URL when deploying to production
-  // Example: https://your-peerjs-server.onrender.com
-  SERVER_URL: 'localhost',
-  SERVER_PORT: 9000,
+  SERVER_URL: isProduction
+    ? process.env.PEER_SERVER_URL || 'your-peerjs-server.onrender.com'
+    : 'localhost',
+
+  SERVER_PORT: isProduction ? 443 : 9000,
+
   SERVER_PATH: '/peerjs',
-  
+
   // PeerJS configuration options
   CONFIG: {
-    debug: 3, // Log level (0-3)
-    secure: false, // Set to true when using HTTPS
+    debug: 2, // Log level (0=none, 1=errors, 2=warnings, 3=all)
+    secure: isProduction, // Use HTTPS in production
     config: {
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
@@ -25,6 +29,7 @@ export const getPeerServerUrl = () => {
   return {
     host: SERVER_URL,
     port: SERVER_PORT,
-    path: SERVER_PATH
+    path: SERVER_PATH,
+    secure: isProduction
   };
 };
